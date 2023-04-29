@@ -1,0 +1,1 @@
+& mvn package -f "c:\Users\marcw\Documents\projekte\GetPushed\CodeExamples\minecraft\plugin\notificationplugin\pom.xml"

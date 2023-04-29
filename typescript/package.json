@@ -1,0 +1,17 @@
+{
+  "name": "notifications",
+  "scripts": {
+    "build": "tsc"
+  },
+  "engines": {
+    "node": "16"
+  },
+  "main": "lib/index.js",
+  "dependencies": {
+    "node-fetch": "^2.6.7"
+  },
+  "devDependencies": {
+    "@types/node-fetch": "^2.6.3"
+  },
+  "private": true
+}

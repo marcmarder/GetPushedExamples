@@ -1,0 +1,13 @@
+{
+  "name": "notifications",
+  "scripts": {},
+  "engines": {
+    "node": "16"
+  },
+  "main": "notification.js",
+  "dependencies": {
+    "node-fetch": "^2.6.7"
+  },
+  "devDependencies": {},
+  "private": true
+}

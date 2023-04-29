@@ -1,0 +1,1 @@
+apiUrl: https://us-central1-getpushed-8ad1d.cloudfunctions.net/createNotificationEndpoint/{channelId}/{title}/{message}
