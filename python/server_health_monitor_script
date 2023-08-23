@@ -1,0 +1,129 @@
+import psutil
+import asyncio
+import requests
+import json
+from datetime import datetime
+
+
+class Datapoint:
+    def __init__(self, disk_space, cpu_usage, free_ram, network_usage):
+        self.timestamp = datetime.now()
+        self.disk_space = disk_space
+        self.cpu_usage = cpu_usage
+        self.free_ram = free_ram
+        self.network_usage = network_usage
+
+
+class ServerHealthData:
+    def __init__(self):
+        self.data_points = []
+
+    def add_data(self, datapoint):
+        self.data_points.append(datapoint)
+
+    def calculate_averages(self):
+        avg_disk_space = sum(
+            dp.disk_space for dp in self.data_points) / len(self.data_points)
+        avg_cpu_usage = sum(
+            dp.cpu_usage for dp in self.data_points) / len(self.data_points)
+        avg_free_ram = sum(
+            dp.free_ram for dp in self.data_points) / len(self.data_points)
+        avg_network_usage = sum(
+            dp.network_usage for dp in self.data_points) / len(self.data_points)
+        return avg_disk_space, avg_cpu_usage, avg_free_ram, avg_network_usage
+
+
+async def send_notification(channel_id, notification_title, notification_body):
+    base_url = f"https://us-central1-getpushed-8ad1d.cloudfunctions.net/createNotificationEndpoint/{channel_id}"
+
+    # Make http post
+    try:
+        result = requests.post(
+            base_url,
+            headers={
+                "Content-Type": "application/json",
+            },
+            data=json.dumps({
+                "title": notification_title,
+                "description": notification_body,
+            })
+        )
+        print("Notification Result: " +
+              str(result.status_code) +
+              " " +
+              result.text)
+    except Exception as e:
+        print("Error: " + str(e))
+
+
+async def initial_notification(channel_id):
+    notification_title = "Server Health Monitor Started"
+    first_data_point = collect_server_metrics()
+    notification_body = f"Initial Disk Space: {first_data_point.disk_space:.2f}%\n" + \
+        f"Initial CPU Usage: {first_data_point.cpu_usage:.2f}%\n" + \
+        f"Initial Free RAM: {first_data_point.free_ram / (1024 ** 3):.2f} GB\n" + \
+        f"Initial Network Usage: {first_data_point.network_usage / (1024 ** 2):.2f} MB"
+    await send_notification(channel_id, notification_title, notification_body)
+
+
+def collect_server_metrics():
+    # Collect disk space
+    disk_usage = psutil.disk_usage('/')
+    disk_space_percentage = disk_usage.percent
+
+    # Collect CPU usage
+    cpu_usage_percent = psutil.cpu_percent(interval=1, percpu=False)
+
+    # Collect memory
+    memory = psutil.virtual_memory()
+    free_ram = memory.available
+
+    # Collect network usage
+    network = psutil.net_io_counters()
+    avg_network_usage = (network.bytes_sent + network.bytes_recv) / 2
+
+    # Create a Datapoint instance
+    current_datapoint = Datapoint(
+        disk_space_percentage, cpu_usage_percent, free_ram, avg_network_usage)
+    return current_datapoint
+
+
+async def monitor_server_health(channel_id):
+    collected_data = ServerHealthData()
+
+    while True:
+        current_datapoint = collect_server_metrics()
+        collected_data.add_data(current_datapoint)
+
+        if len(collected_data.data_points) >= 60:  # 1 hour
+            avg_disk_space, avg_cpu_usage, avg_free_ram, avg_network_usage = collected_data.calculate_averages()
+
+            notification_title = "Hourly Server Health Report"
+            notification_body = (
+                f"Average Disk Space: {avg_disk_space:.2f}%\n"
+                f"Average CPU Usage: {avg_cpu_usage:.2f}%\n"
+                f"Average Free RAM: {avg_free_ram / (1024 ** 3):.2f} GB\n"
+                f"Average Network Usage: {avg_network_usage / (1024 ** 2):.2f} MB"
+            )
+
+            print("----------------------------------------")
+            print("Current time: " + str(datetime.now()))
+            print(notification_body)
+
+            # Send the notification
+            await send_notification(channel_id, notification_title, notification_body)
+
+            print("----------------------------------------")
+
+            collected_data = ServerHealthData()
+
+        await asyncio.sleep(100)
+
+
+# Run the monitoring loop
+if __name__ == "__main__":
+    print("Starting server health monitor...")
+    channel_id = YOURCHANNELID
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(initial_notification(channel_id))
+    loop.run_until_complete(monitor_server_health(channel_id))
