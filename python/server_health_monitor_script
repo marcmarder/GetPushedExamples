@@ -6,10 +6,10 @@ from datetime import datetime
 
 
 class Datapoint:
-    def __init__(self, disk_space, cpu_usage, free_ram, network_usage):
+    def __init__(self, disk_space, loadavg, free_ram, network_usage):
         self.timestamp = datetime.now()
         self.disk_space = disk_space
-        self.cpu_usage = cpu_usage
+        self.loadavg = loadavg
         self.free_ram = free_ram
         self.network_usage = network_usage
 
@@ -24,13 +24,13 @@ class ServerHealthData:
     def calculate_averages(self):
         avg_disk_space = sum(
             dp.disk_space for dp in self.data_points) / len(self.data_points)
-        avg_cpu_usage = sum(
-            dp.cpu_usage for dp in self.data_points) / len(self.data_points)
+        avg_loadavg = sum(
+            dp.loadavg for dp in self.data_points) / len(self.data_points)
         avg_free_ram = sum(
             dp.free_ram for dp in self.data_points) / len(self.data_points)
         avg_network_usage = sum(
             dp.network_usage for dp in self.data_points) / len(self.data_points)
-        return avg_disk_space, avg_cpu_usage, avg_free_ram, avg_network_usage
+        return avg_disk_space, avg_loadavg, avg_free_ram, avg_network_usage
 
 
 async def send_notification(channel_id, notification_title, notification_body):
@@ -60,7 +60,7 @@ async def initial_notification(channel_id):
     notification_title = "Server Health Monitor Started"
     first_data_point = collect_server_metrics()
     notification_body = f"Initial Disk Space: {first_data_point.disk_space:.2f}%\n" + \
-        f"Initial CPU Usage: {first_data_point.cpu_usage:.2f}%\n" + \
+        f"Initial Load: {first_data_point.loadavg:.2f}\n" + \
         f"Initial Free RAM: {first_data_point.free_ram / (1024 ** 3):.2f} GB\n" + \
         f"Initial Network Usage: {first_data_point.network_usage / (1024 ** 2):.2f} MB"
     await send_notification(channel_id, notification_title, notification_body)
@@ -71,8 +71,8 @@ def collect_server_metrics():
     disk_usage = psutil.disk_usage('/')
     disk_space_percentage = disk_usage.percent
 
-    # Collect CPU usage
-    cpu_usage_percent = psutil.cpu_percent(interval=1, percpu=False)
+    # Collect system load
+    loadavg = psutil.getloadavg()[0]
 
     # Collect memory
     memory = psutil.virtual_memory()
@@ -84,7 +84,7 @@ def collect_server_metrics():
 
     # Create a Datapoint instance
     current_datapoint = Datapoint(
-        disk_space_percentage, cpu_usage_percent, free_ram, avg_network_usage)
+        disk_space_percentage, loadavg, free_ram, avg_network_usage)
     return current_datapoint
 
 
@@ -96,12 +96,12 @@ async def monitor_server_health(channel_id):
         collected_data.add_data(current_datapoint)
 
         if len(collected_data.data_points) >= 60:  # 1 hour
-            avg_disk_space, avg_cpu_usage, avg_free_ram, avg_network_usage = collected_data.calculate_averages()
+            avg_disk_space, loadavg, avg_free_ram, avg_network_usage = collected_data.calculate_averages()
 
             notification_title = "Hourly Server Health Report"
             notification_body = (
                 f"Average Disk Space: {avg_disk_space:.2f}%\n"
-                f"Average CPU Usage: {avg_cpu_usage:.2f}%\n"
+                f"Average Load: {loadavg:.2f}\n"
                 f"Average Free RAM: {avg_free_ram / (1024 ** 3):.2f} GB\n"
                 f"Average Network Usage: {avg_network_usage / (1024 ** 2):.2f} MB"
             )
