@@ -9,7 +9,7 @@ import (
 )
 
 func sendNotification(channelID string, notificationTitle string, notificationBody string) {
-	baseURL := fmt.Sprintf("https://us-central1-getpushed-8ad1d.cloudfunctions.net/createNotificationEndpoint/%s", channelID)
+	baseURL := fmt.Sprintf("https://createnotificationendpointgen2-duaunwu3gq-uc.a.run.app/%s", channelID)
 
 	// Make http post
 	data := map[string]string{

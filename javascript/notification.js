@@ -5,7 +5,7 @@ async function sendNotification(
   notificationTitle,
   notificationBody
 ) {
-  const baseUrl = `https://us-central1-getpushed-8ad1d.cloudfunctions.net/createNotificationEndpoint/${channelId}`;
+  const baseUrl = `https://createnotificationendpointgen2-duaunwu3gq-uc.a.run.app/${channelId}`;
 
   // Make http post
   try {

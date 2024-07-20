@@ -6,7 +6,7 @@ export async function sendNotification(
   description: string
 ) {
   const result = await fetch(
-    "https://us-central1-getpushed-8ad1d.cloudfunctions.net/createNotificationEndpoint/" +
+    "https://createnotificationendpointgen2-duaunwu3gq-uc.a.run.app/" +
       channel,
     {
       method: "POST",

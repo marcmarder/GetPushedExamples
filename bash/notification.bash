@@ -5,7 +5,7 @@ send_notification() {
   local notification_title="$2"
   local notification_body="$3"
 
-  local base_url="https://us-central1-getpushed-8ad1d.cloudfunctions.net/createNotificationEndpoint/${channel_id}"
+  local base_url="https://createnotificationendpointgen2-duaunwu3gq-uc.a.run.app/${channel_id}"
 
   # Make http post
   local result=$(curl -s -w "\n%{http_code}" -X POST "${base_url}" \

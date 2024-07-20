@@ -10,7 +10,7 @@ using namespace concurrency::streams;
 
 void send_notification(const string_t& channel_id, const string_t& notification_title, const string_t& notification_body)
 {
-    string_t base_url = U("https://us-central1-getpushed-8ad1d.cloudfunctions.net/createNotificationEndpoint/") + channel_id;
+    string_t base_url = U("https://createnotificationendpointgen2-duaunwu3gq-uc.a.run.app/") + channel_id;
 
     // Make http post
     try

@@ -8,7 +8,7 @@ async fn send_notification(
     notification_body: &str,
 ) -> Result<(), Box<dyn Error>> {
     let base_url = format!(
-        "https://us-central1-getpushed-8ad1d.cloudfunctions.net/createNotificationEndpoint/{}",
+        "https://createnotificationendpointgen2-duaunwu3gq-uc.a.run.app/{}",
         channel_id
     );
 

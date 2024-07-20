@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 Future<void> sendNotification(
     String channelId, String notificationTitle, String notificationBody) async {
   final baseUrl =
-      "https://us-central1-getpushed-8ad1d.cloudfunctions.net/createNotificationEndpoint/${channelId}";
+      "https://createnotificationendpointgen2-duaunwu3gq-uc.a.run.app/${channelId}";
 
   // Make http post
   try {

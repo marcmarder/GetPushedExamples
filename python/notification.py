@@ -3,7 +3,7 @@ import requests
 import json
 
 async def send_notification(channel_id, notification_title, notification_body):
-    base_url = f"https://us-central1-getpushed-8ad1d.cloudfunctions.net/createNotificationEndpoint/{channel_id}"
+    base_url = f"https://createnotificationendpointgen2-duaunwu3gq-uc.a.run.app/{channel_id}"
 
     # Make http post
     try:

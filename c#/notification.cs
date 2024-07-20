@@ -11,7 +11,7 @@ namespace YourNamespace
     {
         public async Task SendNotification(string channelId, string notificationTitle, string notificationBody)
         {
-            string baseUrl = $"https://us-central1-getpushed-8ad1d.cloudfunctions.net/createNotificationEndpoint/{channelId}";
+            string baseUrl = $"https://createnotificationendpointgen2-duaunwu3gq-uc.a.run.app/{channelId}";
 
             // Make http post
             try

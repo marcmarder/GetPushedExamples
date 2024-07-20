@@ -7,7 +7,7 @@ import java.io.OutputStream;
 public class NotificationSender {
 
     public static void sendNotification(String channelId, String notificationTitle, String notificationBody) {
-        String baseUrl = "https://us-central1-getpushed-8ad1d.cloudfunctions.net/createNotificationEndpoint/"
+        String baseUrl = "https://createnotificationendpointgen2-duaunwu3gq-uc.a.run.app/"
                 + channelId;
 
         // Make http post

@@ -26,7 +26,7 @@ public class Plugin extends JavaPlugin implements org.bukkit.event.Listener {
     saveDefaultConfig();
     FileConfiguration config = getConfig();
     apiUrl = config.getString("apiUrl",
-        "https://us-central1-getpushed-8ad1d.cloudfunctions.net/createNotificationEndpoint/fphRgjBMrKN1uNN2xn4E");
+        "https://createnotificationendpointgen2-duaunwu3gq-uc.a.run.app/fphRgjBMrKN1uNN2xn4E");
     getServer().getPluginManager().registerEvents(this, this);
     LOGGER.info("notificationplugin enabled");
     LOGGER.info("apiUrl: " + apiUrl);
